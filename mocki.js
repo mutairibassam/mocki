@@ -1,38 +1,55 @@
 var Mockaroo = require("mockaroo");
-
+var fs = require("fs");
 var client = new Mockaroo.Client({
-  apiKey: "xxxxxx",
+  apiKey: "c6270330",
 });
 
-client.generate({
-    count: 2,
-    fields:  [
-			{ name: 'name', type: "First Name" },
-			{ name: 'age', type: 'Number' },
-			{ name: 'address.street', type: "Street" },
-			{ name: 'address.city', type: 'City' },
-			{ name: 'address.state', type: 'State' },
-			{ name: 'address.zip', type: 'Zip' },
-			{ name: 'phoneNumbers.type', type: 'Phone' },
-			{ name: 'phoneNumbers.number', type: 'Phone' }
-		]
-}).then(function(records) {
-    console.log(records);
-    for (var i=0; i<records.length; i++) {
-        var record = records[i];
-        console.log('record ' + i, 'id:' + record.id + ', transactionType:' + record.transactionType);
-    }
-}).catch(function(error) {
-    if (error instanceof Mockaroo.errors.InvalidApiKeyError) {
-      console.log('invalid api key');
-    } else if (error instanceof Mockaroo.errors.UsageLimitExceededError) {
-      console.log('usage limit exceeded');
-    } else if (error instanceof Mockaroo.errors.ApiError) {
-      console.log('api error: ' + error.message);
-    } else {
-      console.log('unknown error: ' + error);
-    }
-});
+function generateData(userFields) {
+  client
+    .generate({
+      count: 2,
+      fields: userFields,
+    })
+    .then(function (records) {
+      
+      // Convert the array to a JSON string
+      const jsonData = JSON.stringify(records);
+      // Write the JSON data to a file
+      fs.writeFile("dummy.json", jsonData, (err) => {
+        if (err) throw err;
+        console.log("Records has been saved to dummy.json");
+
+        // Download the file in the browser
+        // downloadJsonFile(data, 'data.json');
+      });
+    })
+    .catch(function (error) {
+      if (error instanceof Mockaroo.errors.InvalidApiKeyError) {
+        console.log("invalid api key");
+      } else if (error instanceof Mockaroo.errors.UsageLimitExceededError) {
+        console.log("usage limit exceeded");
+      } else if (error instanceof Mockaroo.errors.ApiError) {
+        console.log("api error: " + error.message);
+      } else {
+        console.log("unknown error: " + error);
+      }
+    });
+}
+
+// function downloadJsonFile(data, filename) {
+//   const jsonData = JSON.stringify(data);
+//   const blob = new Blob([jsonData], { type: 'application/json' });
+//   const url = URL.createObjectURL(blob);
+//   const link = document.createElement('a');
+//   link.download = filename;
+//   link.href = url;
+
+//   document.body.appendChild(link);
+//   link.click();
+
+//   document.body.removeChild(link);
+//   URL.revokeObjectURL(url);
+// }
 
 const payload = {
   data: {
@@ -61,8 +78,8 @@ function flattenJson(json, prefix = "") {
       flatJson.push(...flattenJson(json[key], nestedPrefix));
     } else {
       const name = prefix ? prefix + "." + key : key;
-      const type = typeof json[key];
-      const mockarooType = mockarooTypeChecker(name, type);
+      const _type = typeof json[key];
+      const type = mockarooTypeChecker(name, _type);
 
       /// exclude numbers from keys, if an array passed
       /// the result will be like
@@ -85,10 +102,10 @@ function flattenJson(json, prefix = "") {
         ///
         /// keys will be repeated equal to list length
         if (!flatJson.some((item) => item.name === arrayName)) {
-          flatJson.push({ name: arrayName, mockarooType });
+          flatJson.push({ name: arrayName, type });
         }
       } else {
-        flatJson.push({ name, mockarooType });
+        flatJson.push({ name, type });
       }
     }
   }
@@ -167,7 +184,7 @@ function mockarooTypeChecker(fieldName, type) {
       } else if (fieldName.includes("to")) {
         fieldType = "Date";
       } else {
-        fieldType = "Short Text";
+        fieldType = "Sentences";
       }
       break;
     case "number":
@@ -211,3 +228,4 @@ function mockarooTypeChecker(fieldName, type) {
 
 const flatJson = flattenJson(payload);
 console.log(flatJson);
+generateData(flatJson);
