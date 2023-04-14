@@ -28,14 +28,13 @@ app.post('/benchmark', async (req, res) => {
 
   if(config.method !== "GET") {
     const flatJson = flattenJson(config.payload);
-    console.log(flatJson);
-    const [isValid, data] = await generateData2(flatJson);
+    const [isValid, msg] = await generateData2(flatJson);
     if(isValid) {
       const result = await startBench()
-      return res.send({result: `Success! ${result}`})
+      return res.send({data: result})
     } else {
-      console.log(data);
-      return res.send({result: data})
+      console.log(msg);
+      return res.send({data: msg})
     }
   }
 });

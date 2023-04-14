@@ -1,5 +1,6 @@
 const payloadInput = document.getElementById('payload');
 const payloadError = document.getElementById('payload-error');
+const responseData = document.getElementById('response');
 
 // Validate JSON payload
 payloadInput.addEventListener('input', () => {
@@ -33,7 +34,6 @@ payloadInput.addEventListener('input', () => {
   
     const formData = new FormData(form);
     const payload = formData.get('payload');
-    console.log(payload);
   
     // Validate JSON payload
     try {
@@ -71,9 +71,51 @@ payloadInput.addEventListener('input', () => {
       },
       body: JSON.stringify(json),
     });
-    const result = await response.json();
-  
-    // Display result
-    console.log(result);
+    const result = await response.json(); 
+    // Get the parent element where the table will be inserted
+    const parentElement = document.getElementById('parentElementId');
+    // Create a table element
+    const table = document.createElement('table');  
+    const td = createTableFromObject(result, table)
+    parentElement.appendChild(td);
   });
+
+
+  function createTableFromObject(result, table) {
+    for (const [key, value] of Object.entries(result)) {
+      const row = document.createElement('tr');
+      const th = document.createElement('th');
+      th.textContent = key;
+      const td = document.createElement('td');
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        // Create a nested table for nested objects
+        const nestedTable = document.createElement('table');
+        createTableFromObject(value, nestedTable);
+        td.appendChild(nestedTable);
+      } else if (Array.isArray(value)) {
+        // Create a list for arrays
+        const ul = document.createElement('ul');
+        value.forEach(val => {
+          const li = document.createElement('li');
+          if (typeof val === 'object' && !Array.isArray(val)) {
+            // Create a nested table for nested objects in arrays
+            const nestedTable = document.createElement('table');
+            createTableFromObject(val, nestedTable);
+            li.appendChild(nestedTable);
+          } else {
+            li.textContent = val;
+          }
+          ul.appendChild(li);
+        });
+        td.appendChild(ul);
+      } else {
+        td.textContent = value;
+      }
+      row.appendChild(th);
+      row.appendChild(td);
+      table.appendChild(row);
+    }
+    return table
+  }
+  
   

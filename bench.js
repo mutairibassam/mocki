@@ -19,7 +19,6 @@ async function startBench() {
   const autocannonInstance = AutocannonConfig.getInstance()
 
   const url = autocannonInstance.full_path;
-  console.log(`full path ${url}`);
 
   const numConnections = autocannonInstance.numConnections
   const maxConnectionRequests = autocannonInstance.maxConnectionRequests
@@ -53,12 +52,10 @@ async function startBench() {
   try {
     const results = await new Promise((resolve, reject) => {
       instance.on("done", (results) => {
-        console.log(results);
         if (results.error) {
           console.error("Error in finishedBench:", results.error);
           return reject(results.error);
         } else {
-          console.log("Finished Bench", results);
           return resolve(results);
         }
       });
