@@ -15,7 +15,7 @@ function flattenJson(json, prefix = "") {
     } else {
       const name = prefix ? prefix + "." + key : key;
       const fieldType = typeof json[key];
-      const type = mockarooTypeChecker(name, fieldType);
+      let type = mockarooTypeChecker(name, fieldType);
 
       /// exclude numbers from keys, if an array passed
       /// the result will be like
@@ -115,10 +115,17 @@ function mockarooTypeChecker(fieldName, type) {
         fieldType = "SSN";
       } else if (fieldName.includes("currency")) {
         fieldType = "Currency";
+      } else if (fieldName.includes("date")) {
+        fieldType = "Datetime";
       } else if (fieldName.includes("from")) {
         fieldType = "Datetime";
       } else if (fieldName.includes("to")) {
         fieldType = "Datetime";
+      } else if (
+        fieldName.toLowerCase().includes("_id") ||
+        fieldName.toLowerCase().includes("mongo")
+      ) {
+        fieldType = "MongoDB ObjectID";
       } else {
         fieldType = "Sentences";
         options = { min: 1, max: 1 };
@@ -146,15 +153,8 @@ function mockarooTypeChecker(fieldName, type) {
     case "boolean":
       fieldType = "Boolean";
       break;
-    case "object":
-      if (
-        fieldName.toLowerCase().includes("_id") ||
-        fieldName.toLowerCase().includes("mongo")
-      ) {
-        fieldType = "MongoDB ObjectID";
-      } else {
-        fieldType = "Object";
-      }
+    case "Array":
+      fieldType = "Custom List"
       break;
     default:
       fieldType = "Text";

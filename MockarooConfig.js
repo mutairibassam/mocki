@@ -58,7 +58,6 @@ function generateData(mockarooFields) {
 
 async function generateData2(mockarooFields) {
   const mockarooConfig = MockarooConfig.getInstance({ fields: mockarooFields });
-
   try {
     const records = await client.generate({
       count: mockarooConfig.count,

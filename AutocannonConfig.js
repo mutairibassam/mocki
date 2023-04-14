@@ -1,7 +1,6 @@
 class AutocannonConfig {
-  headers = { "content-type": "application/json" };
   static instance;
-
+  headers = { "content-type": "application/json" };
   constructor(options = {}) {
     this.protocol = options.protocol || "http";
     this.baseUrl = options.baseUrl || "localhost";
@@ -27,7 +26,7 @@ class AutocannonConfig {
       }
       this.payload = options.payload;
     }
-    this.headers = options.headers || this.headers;
+    this.headers = JSON.stringify(options.headers) !== '{}' ? options.headers : this.headers
     AutocannonConfig.instance = this;
 
   }
