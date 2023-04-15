@@ -3,8 +3,8 @@ const payloadError = document.getElementById("payload-error");
 const selectElement = document.getElementById("method");
 const parentElement = document.getElementById("parentElementId");
 
-let method = "GET"
-selectElement.addEventListener("change", function() {
+let method = "GET";
+selectElement.addEventListener("change", function () {
   method = selectElement.value;
 });
 // Validate JSON payload
@@ -58,6 +58,14 @@ addHeaderButton.addEventListener("click", () => {
     <button type="button" class="remove-header-button">-</button>
   `;
   headersDiv.appendChild(newHeaderDiv);
+
+  // Add event listener to remove-header-button inside newHeaderDiv
+  const removeHeaderButton = newHeaderDiv.querySelector(
+    ".remove-header-button"
+  );
+  removeHeaderButton.addEventListener("click", () => {
+    newHeaderDiv.remove();
+  });
 });
 
 // Submit form
@@ -70,10 +78,10 @@ form.addEventListener("submit", async (event) => {
   const payload = formData.get("payload");
 
   // Validate JSON payload
-  if(method !== "GET") {
-    if(payload.length === 0) {
-      payloadError.textContent = "Selected operation required payload."
-      return
+  if (method !== "GET") {
+    if (payload.length === 0) {
+      payloadError.textContent = "Selected operation required payload.";
+      return;
     }
     try {
       JSON.parse(payload);
@@ -100,7 +108,7 @@ form.addEventListener("submit", async (event) => {
     }
   });
   json.headers = headers;
-  parentElement.textContent = ''
+  parentElement.textContent = "";
 
   // Send HTTP request
   const response = await fetch("http://localhost:3001/benchmark", {
@@ -112,7 +120,7 @@ form.addEventListener("submit", async (event) => {
     body: JSON.stringify(json),
   });
   const result = await response.json();
-  
+
   // Create a table element
   const table = document.createElement("table");
   const td = createTableFromObject(result, table);
@@ -156,7 +164,6 @@ function createTableFromObject(result, table) {
   return table;
 }
 
-
 function createTableFromObjectHorizontal(result, table) {
   const row = document.createElement("tr");
   for (const [key, value] of Object.entries(result)) {
@@ -193,7 +200,6 @@ function createTableFromObjectHorizontal(result, table) {
   table.appendChild(row);
   return table;
 }
-
 
 function createTableFromObjectVertical(result, table) {
   for (const [key, value] of Object.entries(result)) {
