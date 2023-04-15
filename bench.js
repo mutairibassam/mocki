@@ -3,7 +3,7 @@ const { AutocannonConfig } = require("./AutocannonConfig");
 
 const fs = require("fs");
 
-async function read() {
+async function readPayload() {
   const filename = "./dummy.json";
   try {
     const data = await fs.promises.readFile(filename);
@@ -16,8 +16,22 @@ async function read() {
   }
 }
 
+async function readParams() {
+  const filename = "./dummy_params.json";
+  try {
+    const data = await fs.promises.readFile(filename);
+    const jsonObj = JSON.parse(data);
+    return jsonObj;
+  } catch (error) {
+    throw new Error(
+      `Error reading or parsing JSON file with filename '${filename}': ${error}`
+    );
+  }
+}
+
 async function startBench() {
-  const dummy = await read();
+  const payload = await readPayload();
+  const params = await readParams();
   const autocannonInstance = AutocannonConfig.getInstance();
 
   const url = autocannonInstance.full_path;
@@ -37,10 +51,10 @@ async function startBench() {
     headers: autocannonInstance.headers,
     requests: [
       {
-        path: autocannonInstance.path,
+        path: autocannonInstance.path + params,
         setupRequest: function (request) {
           console.log("Request Number: ", requestNumber + 1);
-          request.body = JSON.stringify(dummy[requestNumber]);
+          request.body = JSON.stringify(payload[requestNumber]);
           requestNumber++;
           return request;
         },

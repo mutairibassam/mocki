@@ -64,7 +64,7 @@ async function generateData2(mockarooFields) {
       fields: mockarooConfig.fields,
     });
     const jsonData = JSON.stringify(records);
-    await fs.promises.writeFile("dummy.json", jsonData);
+    await fs.promises.writeFile("dummy_params.json", jsonData);
     console.log("Records have been saved to dummy.json");
     return [true, "valid"];
   } catch (error) {

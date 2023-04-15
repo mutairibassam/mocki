@@ -13,6 +13,8 @@
     <title>Web Benchmark Tool</title>
   </head>
   <body>
+    <h3>Mocki</h3>
+    <p>Load testing tool</p>
     <form id="benchmark-form">
       <div>
         <label for="protocol-http">HTTP</label>
@@ -38,6 +40,17 @@
         </select>
       </div>
       <br>
+      <!-- <div>
+        <div id="query-params">
+          <div class="query-input">
+            <input class="query-key" type="text" placeholder="Key">
+            <input class="query-value" type="text" placeholder="Value">
+            <button type="button" onclick="this.parentNode.remove()">Remove</button>
+          </div>
+        </div>
+    
+        <button type="button" onclick="addQueryInput()">Add Query Parameter</button> 
+      </div> -->
       <div>
         <label for="connection-count">Number of Connections:</label>
         <input type="text" id="connection-count" name="connection-count" >

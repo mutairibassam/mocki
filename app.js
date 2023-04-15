@@ -17,6 +17,35 @@ payloadInput.addEventListener("input", () => {
   }
 });
 
+// function addQueryInput() {
+//   // Create a new input field for a query parameter
+//   var queryInput = document.createElement("div");
+//   queryInput.classList.add("query-input");
+
+//   var keyInput = document.createElement("input");
+//   keyInput.classList.add("query-key");
+//   keyInput.type = "text";
+//   keyInput.placeholder = "Key";
+
+//   var valueInput = document.createElement("input");
+//   valueInput.classList.add("query-value");
+//   valueInput.type = "text";
+//   valueInput.placeholder = "Value";
+
+//   var removeButton = document.createElement("button");
+//   removeButton.type = "button";
+//   removeButton.innerText = "Remove";
+//   removeButton.onclick = function() {
+//     queryInput.remove();
+//   };
+
+//   queryInput.appendChild(keyInput);
+//   queryInput.appendChild(valueInput);
+//   queryInput.appendChild(removeButton);
+
+//   document.getElementById("query-params").appendChild(queryInput);
+// }
+
 // Add more headers
 const addHeaderButton = document.getElementById("add-header");
 const headersDiv = document.getElementById("headers");

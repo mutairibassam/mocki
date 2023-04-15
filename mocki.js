@@ -1,7 +1,7 @@
 const { AutocannonConfig } = require('./AutocannonConfig');
 const { ApiMetrics } = require("./ApiMetrics");
 const generateData2 = require('./MockarooConfig').generateData2
-const flattenJson = require("./converter").flattenJson
+const converter = require("./converter")
 const startBench = require("./bench").startBench
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -15,8 +15,8 @@ app.post('/benchmark', async (req, res) => {
   const config = new AutocannonConfig({
     protocol: request.protocol,
     baseUrl: request['base-url'],
-    port: request.port,
     path: request.path,
+    port: request.port,
     numConnections: request['connection-count'],
     maxConnectionRequests: request['requester-count'],
     duration: request.duration,
@@ -25,11 +25,18 @@ app.post('/benchmark', async (req, res) => {
     payload: request.payload.length > 0 ? JSON.parse(request.payload) : {}
   })
   if(config.method !== "GET") {
-    const flatJson = flattenJson(config.payload);
+    const flatJson = converter.flattenJson(config.payload);
     const [isValid, msg] = await generateData2(flatJson);
     if(!isValid) {
       return res.send({data: msg})
     }
+  }
+  if(config.params.length > 0) {
+    const flatParams = converter.flattenParams(config.params);
+    const [isValid, msg] = await generateData2(flatParams);
+    if(!isValid) {
+      return res.send({data: msg})
+    } 
   }
   const result = await startBench()
   const obj = new ApiMetrics(result)

@@ -1,4 +1,12 @@
 function flattenJson(json, prefix = "") {
+
+  const options = {
+    Sentences: { min: 1, max: 1 },
+    Age: { min: 15, max: 50 },
+    'Custom List': { values: ["reading", "writing", "swimming"] },
+    dob: { type: "Date", format: "%m/%d/%Y" },
+  };
+
   const flatJson = [];
   if (typeof json !== "object" || json === null) {
     return flatJson;
@@ -16,6 +24,7 @@ function flattenJson(json, prefix = "") {
       const name = prefix ? prefix + "." + key : key;
       const fieldType = typeof json[key];
       let type = mockarooTypeChecker(name, fieldType);
+      const paramOptions = options[type] || {};
 
       /// exclude numbers from keys, if an array passed
       /// the result will be like
@@ -38,18 +47,47 @@ function flattenJson(json, prefix = "") {
         ///
         /// keys will be repeated equal to list length
         if (!flatJson.some((item) => item.name === arrayName)) {
-          flatJson.push({ name: arrayName, type });
+          flatJson.push({ name: arrayName, type, ...paramOptions});
         }
       } else {
-        flatJson.push({ name, type });
+        flatJson.push({ name, type, ...paramOptions});
       }
     }
   }
   return flatJson;
-};
+}
+
+function flattenParams(queryParams) {
+
+  const options = {
+    Sentences: { min: 1, max: 1 },
+    Age: { min: 15, max: 50 },
+    'Custom List': { values: ["reading", "writing", "swimming"] },
+    dob: { type: "Date", format: "%m/%d/%Y" },
+  };
+
+  const queryParamsArr = queryParams.split("&");
+  const result = queryParamsArr.map((queryParam) => {
+    const [name, value] = queryParam.split("=");
+    let parsedValue;
+    try {
+      parsedValue = JSON.parse(decodeURIComponent(value));
+    } catch (error) {
+      parsedValue = decodeURIComponent(value);
+    }
+    const mockarooType = typeof parsedValue;
+    const type = mockarooTypeChecker(name, mockarooType)
+    const paramOptions = options[type] || {};
+
+    return { name, type, ...paramOptions };
+  });
+  return result;
+}
+
 
 function mockarooTypeChecker(fieldName, type) {
   let fieldType = "";
+  let options = {}
   switch (type) {
     case "string":
       if (fieldName.includes("first_name")) {
@@ -153,14 +191,14 @@ function mockarooTypeChecker(fieldName, type) {
     case "boolean":
       fieldType = "Boolean";
       break;
-    case "Array":
+    case "object":
       fieldType = "Custom List"
       break;
     default:
-      fieldType = "Text";
+      fieldType = "Sentences";
       break;
   }
   return fieldType;
 }
 
-module.exports = { flattenJson };
+module.exports = { flattenJson, flattenParams };

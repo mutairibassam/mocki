@@ -6,8 +6,9 @@ class AutocannonConfig {
     this.baseUrl = options.baseUrl || "localhost";
     if (!options.path) {
       throw new Error("Path is required");
-    }
+    } 
     this.path = options.path;
+    this.params = this.path.split('?').length === 2 ? this.path.split('?')[1] : ""
     if (!options.port) {
       throw new Error("Port is required");
     }
@@ -39,6 +40,9 @@ class AutocannonConfig {
   }
 
   get full_path() {
+    if(this.paras.length > 0) {
+      return `${this.protocol}://${this.baseUrl}:${this.port}${this.path}?${this.params}`
+    }
     return `${this.protocol}://${this.baseUrl}:${this.port}${this.path}`
   }
 }
