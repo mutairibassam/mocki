@@ -1,5 +1,6 @@
 const { AutocannonConfig } = require('./AutocannonConfig');
 const { ApiMetrics } = require("./ApiMetrics");
+const { MockarooKey } = require("./MockarooKey");
 const generateData2 = require('./MockarooConfig').generateData2
 const converter = require("./converter")
 const startBench = require("./bench").startBench
@@ -24,6 +25,7 @@ app.post('/benchmark', async (req, res) => {
     headers: request.headers,
     payload: request.payload.length > 0 ? JSON.parse(request.payload) : {}
   })
+
   if(config.method !== "GET") {
     const flatJson = converter.flattenJson(config.payload);
     const [isValid, msg] = await generateData2(flatJson);
@@ -31,16 +33,23 @@ app.post('/benchmark', async (req, res) => {
       return res.send({data: msg})
     }
   }
-  if(config.params.length > 0) {
-    const flatParams = converter.flattenParams(config.params);
-    const [isValid, msg] = await generateData2(flatParams);
-    if(!isValid) {
-      return res.send({data: msg})
-    } 
-  }
+  // if(config.params.length > 0) {
+  //   const flatParams = converter.flattenParams(config.params);
+  //   const [isValid, msg] = await generateData2(flatParams);
+  //   if(!isValid) {
+  //     return res.send({data: msg})
+  //   } 
+  // }
   const result = await startBench()
   const obj = new ApiMetrics(result)
   return res.send({data: obj}) 
+});
+
+app.get("/token", async (req, res) => {
+  const token = req.query.apiKey
+  console.log(token);
+  new MockarooKey({token})
+  res.status(200).send({result: "Token has been set."})
 });
 
 const PORT = process.env.PORT || 3001;

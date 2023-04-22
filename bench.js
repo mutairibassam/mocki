@@ -31,13 +31,14 @@ async function readParams() {
 
 async function startBench() {
   const payload = await readPayload();
-  const params = await readParams();
+  // const params = await readParams();
   const autocannonInstance = AutocannonConfig.getInstance();
 
   const url = autocannonInstance.full_path;
 
   const numConnections = autocannonInstance.numConnections;
-  const maxConnectionRequests = autocannonInstance.maxConnectionRequests;
+  // const maxConnectionRequests = autocannonInstance.maxConnectionRequests;
+  const pipeline = autocannonInstance.pipeline;
   const duration = autocannonInstance.duration;
 
   let requestNumber = 0;
@@ -45,13 +46,14 @@ async function startBench() {
   const instance = autocannon({
     url,
     connections: numConnections,
-    maxConnectionRequests: maxConnectionRequests,
-    duration: duration,
-    method: autocannonInstance.method,
+    // maxConnectionRequests,
+    pipelining: pipeline,
+    duration,
     headers: autocannonInstance.headers,
     requests: [
       {
-        path: autocannonInstance.path + params,
+        method: autocannonInstance.method,
+        path: autocannonInstance.path,
         setupRequest: function (request) {
           console.log("Request Number: ", requestNumber + 1);
           request.body = JSON.stringify(payload[requestNumber]);
@@ -78,5 +80,7 @@ async function startBench() {
     console.error("Error in startBench:", error);
     throw error;
   }
+
+  /// delete local files
 }
 module.exports = { startBench };

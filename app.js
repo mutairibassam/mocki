@@ -2,6 +2,7 @@ const payloadInput = document.getElementById("payload");
 const payloadError = document.getElementById("payload-error");
 const selectElement = document.getElementById("method");
 const parentElement = document.getElementById("parentElementId");
+const token_element = document.getElementById("tokenElement");
 
 let method = "GET";
 selectElement.addEventListener("change", function () {
@@ -10,8 +11,12 @@ selectElement.addEventListener("change", function () {
 // Validate JSON payload
 payloadInput.addEventListener("input", () => {
   try {
-    JSON.parse(payloadInput.value);
-    payloadError.textContent = "";
+    if(payloadInput.value.length !== 0) {
+      JSON.parse(payloadInput.value);
+      payloadError.textContent = ""
+    } else {
+      payloadError.textContent = ""
+    }
   } catch (error) {
     payloadError.textContent = error.message;
   }
@@ -49,7 +54,6 @@ payloadInput.addEventListener("input", () => {
 // Add more headers
 const addHeaderButton = document.getElementById("add-header");
 const headersDiv = document.getElementById("headers");
-
 addHeaderButton.addEventListener("click", () => {
   const newHeaderDiv = document.createElement("div");
   newHeaderDiv.innerHTML = `
@@ -68,9 +72,27 @@ addHeaderButton.addEventListener("click", () => {
   });
 });
 
+const tokenForm = document.getElementById("token-form");
+tokenForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const formData = new FormData(tokenForm);
+  console.log(formData);
+  const token = formData.get("token");
+  console.log(token); 
+    // Send HTTP request
+    const response = await fetch(`http://localhost:3001/token?apiKey=${token}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      },
+    });
+    const data = await response.json();
+    token_element.textContent = data.result;   
+})
+
 // Submit form
 const form = document.getElementById("benchmark-form");
-
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -80,7 +102,7 @@ form.addEventListener("submit", async (event) => {
   // Validate JSON payload
   if (method !== "GET") {
     if (payload.length === 0) {
-      payloadError.textContent = "Selected operation required payload.";
+      payloadError.textContent = "Selected method required payload.";
       return;
     }
     try {
@@ -120,11 +142,12 @@ form.addEventListener("submit", async (event) => {
     body: JSON.stringify(json),
   });
   const result = await response.json();
-
+  console.log(result);
   // Create a table element
   const table = document.createElement("table");
-  const td = createTableFromObject(result, table);
+  const td = createTableFromObject(result.data, table);
   parentElement.appendChild(td);
+  token_element.textContent = "";
 });
 
 function createTableFromObject(result, table) {
@@ -135,17 +158,14 @@ function createTableFromObject(result, table) {
     row.appendChild(th);
     const td = document.createElement("td");
     if (typeof value === "object" && !Array.isArray(value)) {
-      // Create a nested table for nested objects
       const nestedTable = document.createElement("table");
       createTableFromObject(value, nestedTable);
       td.appendChild(nestedTable);
     } else if (Array.isArray(value)) {
-      // Create a list for arrays
       const ul = document.createElement("ul");
       value.forEach((val) => {
         const li = document.createElement("li");
         if (typeof val === "object" && !Array.isArray(val)) {
-          // Create a nested table for nested objects in arrays
           const nestedTable = document.createElement("table");
           createTableFromObject(val, nestedTable);
           li.appendChild(nestedTable);
@@ -158,80 +178,6 @@ function createTableFromObject(result, table) {
     } else {
       td.textContent = value;
     }
-    row.appendChild(td);
-    table.appendChild(row);
-  }
-  return table;
-}
-
-function createTableFromObjectHorizontal(result, table) {
-  const row = document.createElement("tr");
-  for (const [key, value] of Object.entries(result)) {
-    const th = document.createElement("th");
-    th.textContent = key;
-    const td = document.createElement("td");
-    if (typeof value === "object" && !Array.isArray(value)) {
-      // Create a nested table for nested objects
-      const nestedTable = document.createElement("table");
-      createTableFromObject(value, nestedTable);
-      td.appendChild(nestedTable);
-    } else if (Array.isArray(value)) {
-      // Create a list for arrays
-      const ul = document.createElement("ul");
-      value.forEach((val) => {
-        const li = document.createElement("li");
-        if (typeof val === "object" && !Array.isArray(val)) {
-          // Create a nested table for nested objects in arrays
-          const nestedTable = document.createElement("table");
-          createTableFromObject(val, nestedTable);
-          li.appendChild(nestedTable);
-        } else {
-          li.textContent = val;
-        }
-        ul.appendChild(li);
-      });
-      td.appendChild(ul);
-    } else {
-      td.textContent = value;
-    }
-    row.appendChild(th);
-    row.appendChild(td);
-  }
-  table.appendChild(row);
-  return table;
-}
-
-function createTableFromObjectVertical(result, table) {
-  for (const [key, value] of Object.entries(result)) {
-    const row = document.createElement("tr");
-    const th = document.createElement("th");
-    th.textContent = key;
-    const td = document.createElement("td");
-    if (typeof value === "object" && !Array.isArray(value)) {
-      // Create a nested table for nested objects
-      const nestedTable = document.createElement("table");
-      createTableFromObject(value, nestedTable);
-      td.appendChild(nestedTable);
-    } else if (Array.isArray(value)) {
-      // Create a list for arrays
-      const ul = document.createElement("ul");
-      value.forEach((val) => {
-        const li = document.createElement("li");
-        if (typeof val === "object" && !Array.isArray(val)) {
-          // Create a nested table for nested objects in arrays
-          const nestedTable = document.createElement("table");
-          createTableFromObject(val, nestedTable);
-          li.appendChild(nestedTable);
-        } else {
-          li.textContent = val;
-        }
-        ul.appendChild(li);
-      });
-      td.appendChild(ul);
-    } else {
-      td.textContent = value;
-    }
-    row.appendChild(th);
     row.appendChild(td);
     table.appendChild(row);
   }

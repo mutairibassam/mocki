@@ -14,7 +14,8 @@ class AutocannonConfig {
     }
     this.port = options.port;
     this.numConnections = options.numConnections || 10;
-    this.maxConnectionRequests = options.maxConnectionRequests || 1;
+    this.maxConnectionRequests = options.maxConnectionRequests || 100;
+    this.pipeline = options.pipeline || 1;
     this.duration = options.duration || 10;
     this.method = options.method || "GET";
     if (
@@ -40,10 +41,10 @@ class AutocannonConfig {
   }
 
   get full_path() {
-    if(this.paras.length > 0) {
-      return `${this.protocol}://${this.baseUrl}:${this.port}${this.path}?${this.params}`
-    }
-    return `${this.protocol}://${this.baseUrl}:${this.port}${this.path}`
+    // if(this.paras.length > 0) {
+    //   return `${this.protocol}://${this.baseUrl}:${this.port}${this.path}?${this.params}`
+    // }
+    return `${this.protocol}://${this.baseUrl}:${this.port}`
   }
 }
 

@@ -1,9 +1,11 @@
 var Mockaroo = require("mockaroo");
 const { AutocannonConfig } = require('./AutocannonConfig');
+const { MockarooKey } = require('./MockarooKey');
 var fs = require("fs");
-var client = new Mockaroo.Client({
-  apiKey: "c6270330",
-});
+// var client = new Mockaroo.Client({
+//   apiKey: "c6270330",
+// });
+// console.log(client);
 
 class MockarooConfig {
   #instance;
@@ -15,7 +17,7 @@ class MockarooConfig {
       return this.#instance;
     }
     const instance = AutocannonConfig.getInstance();
-    this.count = instance.numConnections * instance.maxConnectionRequests || 2;
+    this.count = Number.parseInt(instance.numConnections) * Number.parseInt(instance.maxConnectionRequests) || 2;
     this.fields = fields;
     this.#instance = this;
   }
@@ -24,39 +26,8 @@ class MockarooConfig {
   }
 }
 
-function generateData(mockarooFields) {
-  const mockarooConfig = MockarooConfig.getInstance({ fields: mockarooFields });
-  
-  client
-    .generate({
-      count: mockarooConfig.count,
-      fields: mockarooConfig.fields,
-    })
-    .then(function (records) {
-      // Convert the array to a JSON string
-      const jsonData = JSON.stringify(records);
-      // Write the JSON data to a file
-      fs.writeFile("dummy.json", jsonData, (err) => {
-        if (err) return false;
-        return true
-        // Download the file in the browser
-        // downloadJsonFile(data, 'data.json');
-      });
-    })
-    .catch(function (error) {
-      if (error instanceof Mockaroo.errors.InvalidApiKeyError) {
-        return false
-      } else if (error instanceof Mockaroo.errors.UsageLimitExceededError) {
-        return false
-      } else if (error instanceof Mockaroo.errors.ApiError) {
-        return false
-      } else {
-        return false
-      }
-    });
-}
-
 async function generateData2(mockarooFields) {
+  const client = MockarooKey.getInstance();
   const mockarooConfig = MockarooConfig.getInstance({ fields: mockarooFields });
   try {
     const records = await client.generate({
@@ -64,7 +35,7 @@ async function generateData2(mockarooFields) {
       fields: mockarooConfig.fields,
     });
     const jsonData = JSON.stringify(records);
-    await fs.promises.writeFile("dummy_params.json", jsonData);
+    await fs.promises.writeFile("dummy.json", jsonData);
     console.log("Records have been saved to dummy.json");
     return [true, "valid"];
   } catch (error) {
