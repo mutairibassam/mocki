@@ -3,7 +3,6 @@ var Mockaroo = require("mockaroo");
 class MockarooKey {
   static instance;
   constructor(options = {}) {
-    console.log(options);
     if (!options.token) {
       throw new Error("Token is required");
     }

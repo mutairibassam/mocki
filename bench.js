@@ -52,9 +52,6 @@ async function startBench() {
   const maxConnectionRequest = autocannonInstance.maxConnectionRequests;
   const pipeline = autocannonInstance.pipeline;
   const duration = autocannonInstance.duration;
-  console.log(numConnections);
-  console.log(maxConnectionRequest);
-  console.log(pipeline);
 
   let requestNumber = 0;
 

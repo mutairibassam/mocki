@@ -60,7 +60,6 @@ function flattenJson(json, prefix = "") {
       }
     }
   }
-  console.log(flatJson);
   return flatJson;
 }
 
@@ -94,7 +93,6 @@ function flattenParams(queryParams) {
 
     return { name, type, ...paramOptions };
   });
-  console.log(result);
   return result;
 }
 

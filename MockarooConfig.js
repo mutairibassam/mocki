@@ -18,7 +18,6 @@ class MockarooConfig {
     }
     const instance = AutocannonConfig.getInstance();
     this.count = Number.parseInt(instance.numConnections) * Number.parseInt(instance.maxConnectionRequests) * Number.parseInt(instance.pipeline)|| 2;
-    console.log(`number of count ${this.count}`);
     this.fields = fields;
     this.#instance = this;
   }

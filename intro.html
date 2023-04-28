@@ -4,38 +4,79 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style> html { padding: 0%; }</style>
     <title>Intro | Mocki</title>
+    <style>
+        html {
+            margin: 0%;
+            padding: 0%;
+        }
+        body {
+            padding: 10px;
+            padding-left: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        h1 {
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 0%;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        strong {
+            font-weight: bold;
+        }
+        h3 {
+            font-size: 1.5em;
+        }
+        p {
+            text-align: center; 
+            margin-top: 0%;
+        }
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 24px;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
+            margin: 0 auto;
+        }
+        button:hover {
+            background-color: #307833;
+        }
+    </style>
 </head>
 <body>
     <h1>Mocki</h1> 
-    <strong><a href="./index.html">Mocki</a> is an automated load testing tool.</strong>
-
-    <ul>
-        <li>author: <a href="https://github.com/mutairibassam">mutairibassam</a></li>
-        <li>contribution: <a href="https://github.com/mutairibassam/mocki">mocki</a></li>
-        <li>features/bugs: <strong> mutairibassam@gmail.com</strong></li>
-        <li>version: <strong>v0.1.1-beta</strong></li>
-    </ul>
+    <p>Mocki is a HTTP benchmarking and data generation tool. <u> No scripts or manual data generation anymore!</u></p>
     <h3>Appendix</h3>
     <ul>
         <li>Pipelining: The number of pipelined requests to use. default: 1. Note: backend pipelining support is required, otherwise will be defaulted to 1.</li>
-        <li>Connection: The number of concurrent connections to use. default: 10.</li>
-        <li>Max connection: The max number of requests to make per connection to the server.</li>
-        <li>Max Overall Requests: The max number of requests to make overall to the server.</li>
+        <li>Number of Connection: The number of concurrent connections to use. default: 10.</li>
+        <li>Max connection: The max number of requests to make per connection to the server. default: 10</li>
         <li>Duration: The number of seconds to run the autocannon. default: 10.</li>
-        <li>Connection Rate: The max number of requests to make per second from an individual connection.</li>
-        <li>Overall Rate: The max number of requests to make per second from all connections.</li>
     </ul>
 
-    <h3>To be added:</h3>
+    <h3>Backlog:</h3>
     <ul>
-        <li>Key: Path to private key for specified cert in pem format.</li>
-        <li>Cert: Path to cert chain in pem format.</li>
-        <li>Workers: Number of worker threads to use to fire requests.</li>
-        <li>Upload: Upload a form (multipart/form-data).</li>
+        <li>Add more variables: connection rate, max overall requests, and amount of total requests.</li>
         <li>Default test types: Stress Testing, Soak Testing, and Load Testing.</li>
+        <li>Upload: Upload a form (multipart/form-data).</li>
+        <li>Workers: Number of worker threads to use to fire requests.</li>
         <li>Get copy of generated data.</li>
     </ul>
+    <a style="text-decoration: none;" href="./index.html"><button>Try Now</button></a>
 </body>
 </html>

@@ -40,7 +40,6 @@ app.post('/benchmark', async (req, res) => {
     }
   }
   const instance = AutocannonConfig.getInstance();
-  console.log(instance.params.length);
   if(instance.params.length > 0) {
     const flatParams = converter.flattenParams(config.params);
     const [isValid, msg] = await generateData2(flatParams, "query");
@@ -49,8 +48,7 @@ app.post('/benchmark', async (req, res) => {
     } 
   }
   const result = await startBench()
-  console.log(result);
-  // removeFiles()
+  removeFiles()
 
   const obj = new ApiMetrics(result)
   return res.send({data: obj}) 
@@ -74,7 +72,6 @@ function removeFiles() {
 
 app.get("/token", async (req, res) => {
   const token = req.query.apiKey
-  console.log(token);
   if(token === "") {
     return res.status(401).send({result: "Empty? seriously!"}) 
   }

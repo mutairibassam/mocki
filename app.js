@@ -91,9 +91,7 @@ tokenForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const formData = new FormData(tokenForm);
-  console.log(formData);
   const token = formData.get("token");
-  console.log(token); 
     // Send HTTP request
     const response = await fetch(`http://localhost:3001/token?apiKey=${token}`, {
       method: "GET",
@@ -158,7 +156,6 @@ form.addEventListener("submit", async (event) => {
   const result = await response.json();
   if(Object.keys(result).length > 1) {
     result = result.data
-    console.log(result);
     if(result.includes("generate")) {
       result = "You need to set the token first."
     }
