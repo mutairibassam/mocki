@@ -4,17 +4,14 @@ class AutocannonConfig {
   constructor(options = {}) {
     this.protocol = options.protocol || "http";
     this.baseUrl = options.baseUrl || "localhost";
-    if (!options.path) {
-      throw new Error("Path is required");
-    } 
-    this.path = options.path;
-    this.params = this.path.split('?').length === 2 ? this.path.split('?')[1] : ""
+    this.path = options.path.split('?').length === 2 ? options.path.split('?')[0] : options.path
+    this.params = options.path.split('?').length === 2 ? options.path.split('?')[1] : ""
     if (!options.port) {
       throw new Error("Port is required");
     }
     this.port = options.port;
-    this.numConnections = options.numConnections || 10;
-    this.maxConnectionRequests = options.maxConnectionRequests || 100;
+    this.numConnections = options.numConnections || 5;
+    this.maxConnectionRequests = options.maxConnectionRequests || 5;
     this.pipeline = options.pipeline || 1;
     this.duration = options.duration || 10;
     this.method = options.method || "GET";

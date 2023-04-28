@@ -157,13 +157,6 @@
       <input type="radio" id="protocol-http" name="protocol" value="http" checked>
       <label for="protocol-https">HTTPS</label>
       <input type="radio" id="protocol-https" name="protocol" value="https">
-    </div>
-    <br>
-    <div>
-      <label for="base-url">Base URL:</label>
-      <input type="text" id="base-url" name="base-url">
-      <label for="port">Port:</label>
-      <input type="text" id="port" name="port"><br>
       <label for="method">Method:</label>
       <select id="method" name="method">
         <option value="GET">GET</option>
@@ -172,8 +165,15 @@
         <option value="DELETE">DELETE</option>
         <option value="PATCH">PATCH</option>
       </select><br>
+    </div>
+    <br>
+    <div>
+      <label for="base-url">Target URL:</label>
+      <input type="text" id="base-url" name="base-url" size="40">
+      <label for="port">Port:</label>
+      <input type="text" id="port" name="port" size="6"><br><br>
       <label for="path">Path:</label>
-      <input type="text" id="path" name="path"><br>
+      <input type="text" id="path" name="path" size="65">
     </div>
     <br>
     <!-- <div>
@@ -189,15 +189,16 @@
       </div> -->
     <div>
       <label for="connection-count">Number of Connections:</label>
-      <input type="text" id="connection-count" name="connection-count"><br>
+      <input type="text" id="connection-count" name="connection-count" size="4">
       <label for="requester-count">Max connection:</label>
-      <input type="text" id="requester-count" name="requester-count"><br>
-      <label for="pipeline">pipelining:</label>
-      <input type="text" id="pipeline" name="pipeline"><br>
+      <input type="text" id="requester-count" name="requester-count" size="4"><br><br>
+      <label for="pipeline">Pipelining:</label>
+      <input type="text" id="pipeline" name="pipeline" size="4">
       <label for="duration">Duration:</label>
-      <input type="text" id="duration" name="duration">
+      <input type="text" id="duration" name="duration" size="4">
     </div>
     <br>
+    <div id="expected-requests"></div>
     <div>
       <label for="headers">Headers:</label>
       <div id="headers">
@@ -211,7 +212,7 @@
     <br>
     <label for="payload">Payload:</label>
     <div>
-      <textarea id="payload" name="payload" rows="20" cols="60"></textarea>
+      <textarea id="payload" name="payload" rows="20" cols="60" wrap=""></textarea>
       <div id="payload-error"></div>
     </div>
     <div>
@@ -220,15 +221,14 @@
   </form>
   </div>
   <div id="user-output">
-    <h2>Load test result</h2>
+    <h2>Performance result</h2>
     <div id="parentElementId"></div>
   </div>
 </main>
   <footer>
-    author: <a target="_blank" href="http://github.com/mutairibassam">@mutairibassam</a>
-    <strong><a target="_blank" href="./intro.html">Appendix</a></strong>
+    <strong><a target="_blank" href="./intro.html">Appendix</a></strong>|
+      author/twitter:<a target="_blank" href="http://github.com/mutairibassam">@mutairibassam</a>|
   </footer>
   <script src="app.js"></script>
 </body>
-
 </html>

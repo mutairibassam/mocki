@@ -17,7 +17,8 @@ class MockarooConfig {
       return this.#instance;
     }
     const instance = AutocannonConfig.getInstance();
-    this.count = Number.parseInt(instance.numConnections) * Number.parseInt(instance.maxConnectionRequests) || 2;
+    this.count = Number.parseInt(instance.numConnections) * Number.parseInt(instance.maxConnectionRequests) * Number.parseInt(instance.pipeline)|| 2;
+    console.log(`number of count ${this.count}`);
     this.fields = fields;
     this.#instance = this;
   }
@@ -26,7 +27,7 @@ class MockarooConfig {
   }
 }
 
-async function generateData2(mockarooFields) {
+async function generateData2(mockarooFields, requester) {
   const client = MockarooKey.getInstance();
   const mockarooConfig = MockarooConfig.getInstance({ fields: mockarooFields });
   try {
@@ -35,8 +36,13 @@ async function generateData2(mockarooFields) {
       fields: mockarooConfig.fields,
     });
     const jsonData = JSON.stringify(records);
-    await fs.promises.writeFile("dummy.json", jsonData);
-    console.log("Records have been saved to dummy.json");
+    if(requester === "query") {
+      await fs.promises.writeFile("dummy_params.json", jsonData); 
+      console.log("Records have been saved to dummy_params.json");
+    } else {
+      await fs.promises.writeFile("dummy.json", jsonData);
+      console.log("Records have been saved to dummy.json");
+    }
     return [true, "valid"];
   } catch (error) {
     if (error instanceof Mockaroo.errors.InvalidApiKeyError) {

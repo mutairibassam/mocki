@@ -4,6 +4,20 @@ const selectElement = document.getElementById("method");
 const parentElement = document.getElementById("parentElementId");
 const token_element = document.getElementById("tokenElement");
 
+function calculateExpectedTotal() {
+  var connectionCount = document.getElementById("connection-count").value || 10; // default value is 10
+  var maxConnection = document.getElementById("requester-count").value || 10; // default value is 10
+  var pipelining = document.getElementById("pipeline").value || 1; // default value is 1
+
+  var expectedTotal = Number(connectionCount) * Number(maxConnection) * Number(pipelining);
+
+  document.getElementById("expected-requests").textContent = `Expected number of hits: ${expectedTotal}`;
+}
+
+window.onload = calculateExpectedTotal;
+
+document.addEventListener("input", calculateExpectedTotal);
+
 let method = "GET";
 selectElement.addEventListener("change", function () {
   method = selectElement.value;
@@ -142,10 +156,16 @@ form.addEventListener("submit", async (event) => {
     body: JSON.stringify(json),
   });
   const result = await response.json();
-  console.log(result);
+  if(Object.keys(result).length > 1) {
+    result = result.data
+    console.log(result);
+    if(result.includes("generate")) {
+      result = "You need to set the token first."
+    }
+  }
   // Create a table element
   const table = document.createElement("table");
-  const td = createTableFromObject(result.data, table);
+  const td = createTableFromObject(result, table);
   parentElement.appendChild(td);
   token_element.textContent = "";
 });

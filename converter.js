@@ -1,10 +1,16 @@
 function flattenJson(json, prefix = "") {
-
   const options = {
     Sentences: { min: 1, max: 1 },
     Age: { min: 15, max: 50 },
-    'Custom List': { values: ["reading", "writing", "swimming"] },
+    "Custom List": { values: ["reading", "writing", "swimming"] },
     dob: { type: "Date", format: "%m/%d/%Y" },
+    URL: {
+      includeProtocol: true,
+      includeHost: true,
+      includeQueryString: false,
+    },
+    Paragraphs: { min: 1, max: 2 },
+    Phone: { format: "##########" },
   };
 
   const flatJson = [];
@@ -47,23 +53,30 @@ function flattenJson(json, prefix = "") {
         ///
         /// keys will be repeated equal to list length
         if (!flatJson.some((item) => item.name === arrayName)) {
-          flatJson.push({ name: arrayName, type, ...paramOptions});
+          flatJson.push({ name: arrayName, type, ...paramOptions });
         }
       } else {
-        flatJson.push({ name, type, ...paramOptions});
+        flatJson.push({ name, type, ...paramOptions });
       }
     }
   }
+  console.log(flatJson);
   return flatJson;
 }
 
 function flattenParams(queryParams) {
-
   const options = {
     Sentences: { min: 1, max: 1 },
     Age: { min: 15, max: 50 },
-    'Custom List': { values: ["reading", "writing", "swimming"] },
+    "Custom List": { values: ["reading", "writing", "swimming"] },
     dob: { type: "Date", format: "%m/%d/%Y" },
+    URL: {
+      includeProtocol: true,
+      includeHost: true,
+      includeQueryString: false,
+    },
+    Paragraphs: { min: 1, max: 2 },
+    Phone: { format: "##########" },
   };
 
   const queryParamsArr = queryParams.split("&");
@@ -76,18 +89,17 @@ function flattenParams(queryParams) {
       parsedValue = decodeURIComponent(value);
     }
     const mockarooType = typeof parsedValue;
-    const type = mockarooTypeChecker(name, mockarooType)
+    const type = mockarooTypeChecker(name, mockarooType);
     const paramOptions = options[type] || {};
 
     return { name, type, ...paramOptions };
   });
+  console.log(result);
   return result;
 }
 
-
 function mockarooTypeChecker(fieldName, type) {
   let fieldType = "";
-  let options = {}
   switch (type) {
     case "string":
       if (fieldName.includes("first_name")) {
@@ -101,7 +113,7 @@ function mockarooTypeChecker(fieldName, type) {
       } else if (fieldName.includes("password")) {
         fieldType = "Password";
       } else if (fieldName.includes("address")) {
-        fieldType = "Address";
+        fieldType = "Address Line 2";
       } else if (fieldName.includes("city")) {
         fieldType = "City";
       } else if (
@@ -172,6 +184,8 @@ function mockarooTypeChecker(fieldName, type) {
     case "number":
       if (fieldName.toLowerCase().includes("age")) {
         fieldType = "Age";
+      } else if (fieldName.includes("password")) {
+        fieldType = "Password";
       } else if (
         fieldName.toLowerCase().includes("salary") ||
         fieldName.toLowerCase().includes("income")
@@ -192,7 +206,7 @@ function mockarooTypeChecker(fieldName, type) {
       fieldType = "Boolean";
       break;
     case "object":
-      fieldType = "Custom List"
+      fieldType = "Custom List";
       break;
     default:
       fieldType = "Sentences";

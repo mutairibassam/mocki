@@ -41,10 +41,12 @@ class ApiMetrics {
 
 class StatusCodeStats {
   constructor(statusCodeStats) {
-    this.stats = Object.entries(statusCodeStats).reduce((obj, [key, value]) => {
-      obj[key] = new StatusCodeCount(value);
-      return obj;
-    }, {});
+    // if(statusCodeStats !== undefined || statusCodeStats !== null) {
+      this.stats = Object.entries(statusCodeStats).reduce((obj, [key, value]) => {
+        obj[key] = new StatusCodeCount(value);
+        return obj;
+      }, {}); 
+    // }
   }
 }
 

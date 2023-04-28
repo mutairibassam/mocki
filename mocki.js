@@ -1,3 +1,4 @@
+const fs = require("fs");
 const { AutocannonConfig } = require('./AutocannonConfig');
 const { ApiMetrics } = require("./ApiMetrics");
 const { MockarooKey } = require("./MockarooKey");
@@ -26,6 +27,11 @@ app.post('/benchmark', async (req, res) => {
     payload: request.payload.length > 0 ? JSON.parse(request.payload) : {}
   })
 
+  const filename_dummy = "./dummy.json";
+  const filename_params = "./dummy_params.json";
+  await fs.promises.writeFile(filename_dummy, "");
+  await fs.promises.writeFile(filename_params, "");
+
   if(config.method !== "GET") {
     const flatJson = converter.flattenJson(config.payload);
     const [isValid, msg] = await generateData2(flatJson);
@@ -33,23 +39,47 @@ app.post('/benchmark', async (req, res) => {
       return res.send({data: msg})
     }
   }
-  // if(config.params.length > 0) {
-  //   const flatParams = converter.flattenParams(config.params);
-  //   const [isValid, msg] = await generateData2(flatParams);
-  //   if(!isValid) {
-  //     return res.send({data: msg})
-  //   } 
-  // }
+  const instance = AutocannonConfig.getInstance();
+  console.log(instance.params.length);
+  if(instance.params.length > 0) {
+    const flatParams = converter.flattenParams(config.params);
+    const [isValid, msg] = await generateData2(flatParams, "query");
+    if(!isValid) {
+      return res.send({data: msg})
+    } 
+  }
   const result = await startBench()
+  console.log(result);
+  // removeFiles()
+
   const obj = new ApiMetrics(result)
   return res.send({data: obj}) 
 });
 
+/// delete local files
+function removeFiles() {
+  try {
+    fs.unlink("dummy.json", (err) => {
+      if (err) throw err;
+      console.log(`File dummy was deleted`);
+    });
+    fs.unlink("dummy_params.json", (err) => {
+      if (err) throw err;
+      console.log(`File dummy_params was deleted`);
+    }); 
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 app.get("/token", async (req, res) => {
   const token = req.query.apiKey
   console.log(token);
+  if(token === "") {
+    return res.status(401).send({result: "Empty? seriously!"}) 
+  }
   new MockarooKey({token})
-  res.status(200).send({result: "Token has been set."})
+  return res.status(200).send({result: "Token has been set."})
 });
 
 const PORT = process.env.PORT || 3001;
