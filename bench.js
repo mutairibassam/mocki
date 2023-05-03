@@ -52,9 +52,10 @@ async function startBench() {
   const maxConnectionRequest = autocannonInstance.maxConnectionRequests;
   const pipeline = autocannonInstance.pipeline;
   const duration = autocannonInstance.duration;
+  const path = autocannonInstance.path
+  const fixed_params = autocannonInstance.fix_params
 
   let requestNumber = 0;
-
   const instance = autocannon({
     url,
     connections: numConnections,
@@ -67,7 +68,7 @@ async function startBench() {
         method: autocannonInstance.method,          
         setupRequest: function (request) {
           console.log("Request Number: ", requestNumber + 1);
-          request.path = params !== undefined ? autocannonInstance.path + "?" + toQuery(params[requestNumber]) : autocannonInstance.path;
+          request.path = getPath(params, fixed_params, path, requestNumber)
           request.body =
           payload !== undefined
               ? JSON.stringify(payload[requestNumber])
@@ -96,4 +97,17 @@ async function startBench() {
     throw error;
   }
 }
+
+function getPath(params, fix_params, path, requestNumber) {
+  if (!params && !fix_params) {
+    return path;
+  } else if (params && !fix_params) {
+    return path +"?"+ toQuery(params[requestNumber]);
+  } else if (params && fix_params) {
+    return path +"?"+ toQuery(params[requestNumber]) +"&"+ fix_params;
+  } else if (!params && fix_params) {
+    return path +"?"+ fix_params;
+  }
+}
+
 module.exports = { startBench };

@@ -2,10 +2,6 @@ var Mockaroo = require("mockaroo");
 const { AutocannonConfig } = require('./AutocannonConfig');
 const { MockarooKey } = require('./MockarooKey');
 var fs = require("fs");
-// var client = new Mockaroo.Client({
-//   apiKey: "c6270330",
-// });
-// console.log(client);
 
 class MockarooConfig {
   #instance;

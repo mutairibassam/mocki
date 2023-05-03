@@ -77,7 +77,7 @@ function flattenParams(queryParams) {
     Paragraphs: { min: 1, max: 2 },
     Phone: { format: "##########" },
   };
-
+  console.log(queryParams);
   const queryParamsArr = queryParams.split("&");
   const result = queryParamsArr.map((queryParam) => {
     const [name, value] = queryParam.split("=");
@@ -88,11 +88,13 @@ function flattenParams(queryParams) {
       parsedValue = decodeURIComponent(value);
     }
     const mockarooType = typeof parsedValue;
+    /// todo: lowercase name
     const type = mockarooTypeChecker(name, mockarooType);
     const paramOptions = options[type] || {};
 
     return { name, type, ...paramOptions };
   });
+  console.log(result);
   return result;
 }
 
@@ -165,6 +167,8 @@ function mockarooTypeChecker(fieldName, type) {
         fieldType = "Currency";
       } else if (fieldName.includes("date")) {
         fieldType = "Datetime";
+      } else if (fieldName.includes("dob")) {
+        fieldType = "Datetime"
       } else if (fieldName.includes("from")) {
         fieldType = "Datetime";
       } else if (fieldName.includes("to")) {

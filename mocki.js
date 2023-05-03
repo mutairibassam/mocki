@@ -40,16 +40,15 @@ app.post('/benchmark', async (req, res) => {
     }
   }
   const instance = AutocannonConfig.getInstance();
-  if(instance.params.length > 0) {
-    const flatParams = converter.flattenParams(config.params);
+  if(instance.dynamic_params.length > 0) {
+    const flatParams = converter.flattenParams(config.dynamic_params);
     const [isValid, msg] = await generateData2(flatParams, "query");
     if(!isValid) {
       return res.send({data: msg})
     } 
   }
   const result = await startBench()
-  removeFiles()
-
+  // removeFiles()
   const obj = new ApiMetrics(result)
   return res.send({data: obj}) 
 });
