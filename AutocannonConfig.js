@@ -24,8 +24,6 @@ class AutocannonConfig {
     
     this.dynamic_params = new URLSearchParams(this.temp2).toString();
     this.fix_params = new URLSearchParams(this.temp1).toString();
-    console.log("dynamic",this.dynamic_params);
-    console.log("fix",this.fix_params);
 
     this.port = options.port || undefined;
     this.numConnections = options.numConnections || 5;

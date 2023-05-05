@@ -77,7 +77,6 @@ function flattenParams(queryParams) {
     Paragraphs: { min: 1, max: 2 },
     Phone: { format: "##########" },
   };
-  console.log(queryParams);
   const queryParamsArr = queryParams.split("&");
   const result = queryParamsArr.map((queryParam) => {
     const [name, value] = queryParam.split("=");
@@ -94,7 +93,6 @@ function flattenParams(queryParams) {
 
     return { name, type, ...paramOptions };
   });
-  console.log(result);
   return result;
 }
 
