@@ -74,17 +74,17 @@
 
     <h3>Backlog (things might be removed):</h3>
     <ul>
+        <li>Static query params (completed)</li>
         <li>Add more variables: connection rate, max overall requests, and amount of total requests.</li>
         <li>Default test types: Stress Testing, Soak Testing, and Load Testing.</li>
         <li>Upload: Upload a form (multipart/form-data).</li>
         <li>Workers: Number of worker threads to use to fire requests.</li>
         <li>Get copy of generated data.</li>
         <li>Support HTTP/2.0</li>
-        <li>thresholds</li>
-        <li>static query params</li>
-        <li>add fuzzy testing</li>
+        <li>Tthresholds</li>
+        <li>Add fuzzy testing</li>
     </ul>
-    <h3>tips</h3>
+    <h3>HTTP 1.1 vs HTTP 2</h3>
     <ul>
         <li>Performance optimization: (hacks - reduce number of requests) / ugly appraoches:</li>
         <ul>
@@ -96,22 +96,24 @@
         </ul>
         these have been solved by HTTP 2 with the support of multi-plexing.
     </ul>
-    http 1 vs http 2
-    - http 2 is binary protocol while http 1 is text protocol
-    - mostly encrypted
-    - protocol negotiation go through an upgrade header HTTP header that the client send or negotiated during the TLS handshak using ANLP.
-    - multi-plexing uses streams (different logical channles that can send different data items). it's more efficient than pipelining since it can be prioritzed and cancelled without any cost.
-    - header compression
-    - server push (still only theory - send something before client ask for it).
-
-    **amazing tool** -> linux netem allows to emulate packet loss and network delay
-    **circt breaker -> npm:package/under-pressure (send back to the client am busy which give you a chance to auto-scale and switch to different instance)
-    **notare -> perfoance observer
-    timfier -> cal fun time
-    grpc
-    my.noip.com
-
-    http 1.1 keep-alive and pipeline requests
-    multi-processing vs horizental scalability
+    <ul>
+        <li>http 2 is binary protocol while http 1 is text protocol</li>
+        <li>mostly encrypted</li>
+        <li>protocol negotiation go through an upgrade header HTTP header that the client send or negotiated during the TLS handshak using ANLP.</li>
+        <li>multi-plexing uses streams (different logical channles that can send different data items). it's more efficient than pipelining since it can be prioritzed and cancelled without any cost.</li>
+        <li>header compression</li>
+        <li>server push (still only theory - send something before client ask for it).</li>
+    </ul>
+    <h3>Tools</h3>
+    <ul>
+        <li>Linux NetEm: (allows to emulate packet loss and network delay)</li>
+        <li>Circt Breaker: (npm:package/under-pressure uses to send back to the client am busy which give you a chance to auto-scale and switch to different instance)</li>
+        <li>Notare: (npm:package/notare provide performance observation).</li>
+        <li>Timfier: (npm:package/timfier calculate fun time).</li>
+        <li>grpc</li>
+        <li>my.noip.com</li>
+        <li>http 1.1 keep-alive and pipeline requests</li>
+        <li>multi-processing vs horizental scalability</li>
+    </ul> 
 </body>
 </html>

@@ -4,13 +4,15 @@
   "description": "",
   "main": "mocki.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "local": "nodemon mocki.js",
+    "start": "node mocki.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "mockaroo": "^0.1.7"
+    "mockaroo": "^0.1.7",
+    "pkg": "^5.8.1"
   },
   "dependencies": {
     "autocannon": "^7.10.0",
