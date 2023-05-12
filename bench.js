@@ -82,12 +82,13 @@ async function startBench() {
   autocannon.track(instance);
   try {
     const results = await new Promise((resolve, reject) => {
-      instance.on("done", (results) => {
-        if (results.error) {
-          console.error("Error in finishedBench:", results.error);
-          return reject(results.error);
+      instance.on("done", (result) => {
+        console.log(result);
+        if (result.error) {
+          console.error("Error in finishedBench:", result.error);
+          return reject(result.error);
         } else {
-          return resolve(results);
+          return resolve(result);
         }
       });
     });

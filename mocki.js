@@ -1,56 +1,102 @@
 const fs = require("fs");
-const { AutocannonConfig } = require('./AutocannonConfig');
+const { AutocannonConfig } = require("./AutocannonConfig");
 const { ApiMetrics } = require("./ApiMetrics");
 const { MockarooKey } = require("./MockarooKey");
-const generateData2 = require('./MockarooConfig').generateData2
-const converter = require("./converter")
-const startBench = require("./bench").startBench
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+const generateData2 = require("./MockarooConfig").generateData2;
+const converter = require("./converter");
+const startBench = require("./bench").startBench;
+const express = require("express");
+const bodyParser = require("body-parser");
+
+/**
+ *  load config file
+ */
+const config = require("./config/default.json");
+
+/**
+ *  for logging [https://www.npmjs.com/package/winston]
+ */
+require("./logger").intialize();
+const logger = require("./logger").logger;
+
+/**
+ *  setting various HTTP headers [https://helmetjs.github.io/]
+ */
+const helmet = require("helmet");
+const { log } = require("winston");
+
+// Initialzie Express
 const app = express();
-app.use(bodyParser.json());
-app.use(cors());
 
-app.post('/benchmark', async (req, res) => {
-  const request = req.body;
-  const config = new AutocannonConfig({
-    protocol: request.protocol,
-    baseUrl: request['base-url'],
-    path: request.path,
-    port: request.port,
-    numConnections: request['connection-count'],
-    maxConnectionRequests: request['requester-count'],
-    duration: request.duration,
-    method: request.method,
-    headers: request.headers,
-    payload: request.payload.length > 0 ? JSON.parse(request.payload) : {}
-  })
+// expose /temp/uploads directory to be accessed through link
+app.use("/temp/uploads", express.static("temp/uploads"));
 
-  const filename_dummy = "./dummy.json";
-  const filename_params = "./dummy_params.json";
-  await fs.promises.writeFile(filename_dummy, "");
-  await fs.promises.writeFile(filename_params, "");
+// Response Body parser
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
 
-  if(config.method !== "GET") {
-    const flatJson = converter.flattenJson(config.payload);
-    const [isValid, msg] = await generateData2(flatJson);
-    if(!isValid) {
-      return res.send({data: msg})
+// parse application/octets-stream
+/* binary files can accept upto 5mb */
+app.use(bodyParser.raw({ type: "application/octet-stream", limit: "1mb" }));
+
+// parse application/json
+app.use(bodyParser.json({ limit: "500mb", extended: true }));
+
+app.use(helmet());
+
+// For CORS
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "*");
+  res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
+app.post("/benchmark", async (req, res) => {
+  try {
+    const request = req.body;
+    const config = new AutocannonConfig({
+      protocol: request.protocol,
+      baseUrl: request["base-url"],
+      path: request.path,
+      port: request.port,
+      numConnections: request["connection-count"],
+      maxConnectionRequests: request["requester-count"],
+      duration: request.duration,
+      method: request.method,
+      headers: request.headers,
+      payload: request.payload.length > 0 ? JSON.parse(request.payload) : {},
+    });
+
+    const filename_dummy = "./dummy.json";
+    const filename_params = "./dummy_params.json";
+    await fs.promises.writeFile(filename_dummy, "");
+    await fs.promises.writeFile(filename_params, "");
+
+    if (config.method !== "GET") {
+      const flatJson = converter.flattenJson(config.payload);
+      const [isValid, msg] = await generateData2(flatJson);
+      if (!isValid) {
+        return res.send({ data: msg });
+      }
     }
+
+    const instance = AutocannonConfig.getInstance();
+    if (instance.dynamic_params.length > 0) {
+      const flatParams = converter.flattenParams(config.dynamic_params);
+      const [isValid, msg] = await generateData2(flatParams, "query");
+      if (!isValid) {
+        return res.send({ data: msg });
+      }
+    }
+    const result = await startBench();
+    removeFiles();
+    const obj = new ApiMetrics(result);
+    return res.status(200).send({ data: obj });
+  } catch (error) {
+    return res.status(400).send({ data: error });
   }
-  const instance = AutocannonConfig.getInstance();
-  if(instance.dynamic_params.length > 0) {
-    const flatParams = converter.flattenParams(config.dynamic_params);
-    const [isValid, msg] = await generateData2(flatParams, "query");
-    if(!isValid) {
-      return res.send({data: msg})
-    } 
-  }
-  const result = await startBench()
-  // removeFiles()
-  const obj = new ApiMetrics(result)
-  return res.send({data: obj}) 
 });
 
 /// delete local files
@@ -63,23 +109,29 @@ function removeFiles() {
     fs.unlink("dummy_params.json", (err) => {
       if (err) throw err;
       console.log(`File dummy_params was deleted`);
-    }); 
+    });
   } catch (error) {
     console.log(error);
   }
 }
 
+/**
+ * Handles a GET request to the "/token" endpoint.
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {object} The response object.
+ */
 app.get("/token", async (req, res) => {
-  const token = req.query.apiKey
-  if(token === "") {
-    return res.status(401).send({result: "Empty? seriously!"}) 
+  const token = req.query.apiKey;
+  if (token === "") {
+    return res.status(401).send({ result: "Empty? seriously!" });
   }
-  new MockarooKey({token})
-  return res.status(200).send({result: "Token has been set."})
+  new MockarooKey({ token });
+  return res.status(200).send({ result: "Token has been set." });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = config.port || 3001;
 
 app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+  logger.info(`Server @ ${config.base_url}:${PORT}`);
 });

@@ -54,9 +54,6 @@ class AutocannonConfig {
   }
 
   get full_path() {
-    // if(this.paras.length > 0) {
-    //   return `${this.protocol}://${this.baseUrl}:${this.port}${this.path}?${this.params}`
-    // }
     return `${this.protocol}://${this.baseUrl}:${this.port}`
   }
 }

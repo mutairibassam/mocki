@@ -1,3 +1,15 @@
+/**
+ * Flattens a JSON object into a flat structure represented as an array of key-value pairs.
+ * If the input is not a valid JSON object or is null, an empty array is returned.
+ * Nested properties are prefixed with the provided prefix string (if any).
+ * The function uses a mockarooTypeChecker and options object to determine the type and options of each property.
+ * 
+ * @param {object} json - The JSON object to flatten.
+ * @param {string} prefix - The prefix to use for nested properties (optional).
+ * @returns {Array} An array of key-value pairs representing the flattened JSON object.
+ *
+ */
+
 function flattenJson(json, prefix = "") {
   const options = {
     Sentences: { min: 1, max: 1 },
@@ -78,19 +90,38 @@ function flattenParams(queryParams) {
     Phone: { format: "##########" },
   };
   const queryParamsArr = queryParams.split("&");
+
+  /**
+   * Processes an array of query parameters and returns an array of objects representing each parameter.
+   * @param {string[]} queryParamsArr - The array of query parameters in the format "name=value".
+   * @returns {Object[]} An array of objects representing each query parameter.
+   *
+   */
   const result = queryParamsArr.map((queryParam) => {
+    // Split the query parameter into name and value parts
     const [name, value] = queryParam.split("=");
+
     let parsedValue;
     try {
+      // Try to parse the value as JSON
       parsedValue = JSON.parse(decodeURIComponent(value));
     } catch (error) {
+      // If parsing fails, use the decoded value as is
       parsedValue = decodeURIComponent(value);
     }
+
+    // Determine the type of the parsed value
     const mockarooType = typeof parsedValue;
-    /// todo: lowercase name
+
+    // todo: lowercase name (Not implemented)
+
+    // Check the type against the mockarooTypeChecker function
     const type = mockarooTypeChecker(name, mockarooType);
+
+    // Retrieve parameter options based on the type
     const paramOptions = options[type] || {};
 
+    // Create an object representing the query parameter
     return { name, type, ...paramOptions };
   });
   return result;
@@ -166,7 +197,7 @@ function mockarooTypeChecker(fieldName, type) {
       } else if (fieldName.includes("date")) {
         fieldType = "Datetime";
       } else if (fieldName.includes("dob")) {
-        fieldType = "Datetime"
+        fieldType = "Datetime";
       } else if (fieldName.includes("from")) {
         fieldType = "Datetime";
       } else if (fieldName.includes("to")) {
