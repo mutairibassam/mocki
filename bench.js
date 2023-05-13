@@ -74,6 +74,9 @@ async function startBench() {
               ? JSON.stringify(payload[requestNumber])
               : null;
           requestNumber++;
+          // console.log(`Method: ${request.method}`);
+          // console.log(`Url: ${request.origin + request.path}`);
+          // request.body != undefined ? console.log(`Payload:\n ${request.body}`) : null
           return request;
         },
       },

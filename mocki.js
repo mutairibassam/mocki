@@ -133,7 +133,7 @@ const PORT = config.port || 3001;
 
 app.listen(PORT, () => {
   logger.info(`Server @ ${config.base_url}:${PORT}`);
-  new MockarooKey({ token: process.env.TOKEN });
+  new MockarooKey({ token: "15fdb4d0" });
   logger.info('Client has been instantiated successfully.')
   console.log(`\n[!] Mocki Backend is running locally. You can benchmark your localhost APIs.`)
   console.log(`[!] Issue/Features [https://github.com/mutairibassam/mocki-ui/issues]\n`);
