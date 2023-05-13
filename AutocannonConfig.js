@@ -25,7 +25,7 @@ class AutocannonConfig {
     this.dynamic_params = new URLSearchParams(this.temp2).toString();
     this.fix_params = new URLSearchParams(this.temp1).toString();
 
-    this.port = options.port || undefined;
+    this.port = options.port || (options.protocol == "http" ? 8080 : 443);
     this.numConnections = options.numConnections || 5;
     this.maxConnectionRequests = options.maxConnectionRequests || 5;
     this.pipeline = options.pipeline || 1;
