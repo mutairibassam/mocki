@@ -8,3 +8,6 @@ mocki
 mocki.pub
 /logs
 .env
+mocki-linux
+mocki-macos
+mocki-win.exe

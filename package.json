@@ -5,7 +5,8 @@
   "main": "mocki.js",
   "scripts": {
     "local": "nodemon mocki.js",
-    "start": "node mocki.js"
+    "start": "node mocki.js",
+    "pkg": "node node_modules/pkg/lib-es5/bin.js mocki.js"
   },
   "keywords": [],
   "author": "",
