@@ -137,6 +137,8 @@ function mockarooTypeChecker(fieldName, type) {
         fieldType = "Last Name";
       } else if (fieldName.includes("full_name")) {
         fieldType = "Full Name";
+      } else if (fieldName.includes("name")) {
+        fieldType = "Full Name";
       } else if (fieldName.includes("username")) {
         fieldType = "Username";
       } else if (fieldName.includes("password")) {

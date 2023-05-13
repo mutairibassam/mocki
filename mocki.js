@@ -7,6 +7,7 @@ const converter = require("./converter");
 const startBench = require("./bench").startBench;
 const express = require("express");
 const bodyParser = require("body-parser");
+require('dotenv').config();
 
 /**
  *  load config file
@@ -104,11 +105,9 @@ function removeFiles() {
   try {
     fs.unlink("dummy.json", (err) => {
       if (err) throw err;
-      console.log(`File dummy was deleted`);
     });
     fs.unlink("dummy_params.json", (err) => {
       if (err) throw err;
-      console.log(`File dummy_params was deleted`);
     });
   } catch (error) {
     console.log(error);
@@ -134,4 +133,8 @@ const PORT = config.port || 3001;
 
 app.listen(PORT, () => {
   logger.info(`Server @ ${config.base_url}:${PORT}`);
+  new MockarooKey({ token: process.env.TOKEN });
+  logger.info('Client has been instantiated successfully.')
+  console.log(`\n[!] Mocki Backend is running locally. You can benchmark your localhost APIs.`)
+  console.log(`[!] Issue/Features [https://github.com/mutairibassam/mocki-ui/issues]\n`);
 });

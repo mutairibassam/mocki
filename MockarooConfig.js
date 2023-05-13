@@ -33,10 +33,8 @@ async function generateData2(mockarooFields, requester) {
     const jsonData = JSON.stringify(records);
     if(requester === "query") {
       await fs.promises.writeFile("dummy_params.json", jsonData); 
-      console.log("Records have been saved to dummy_params.json");
     } else {
       await fs.promises.writeFile("dummy.json", jsonData);
-      console.log("Records have been saved to dummy.json");
     }
     return [true, "valid"];
   } catch (error) {
