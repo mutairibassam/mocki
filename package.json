@@ -6,6 +6,7 @@
   "scripts": {
     "local": "nodemon mocki.js",
     "start": "node mocki.js",
+    "lint": "npx eslint --fix && npx eslint .",
     "pkg": "node node_modules/pkg/lib-es5/bin.js mocki.js"
   },
   "keywords": [],
@@ -13,7 +14,7 @@
   "license": "ISC",
   "devDependencies": {
     "dotenv": "^16.0.3",
-    "eslint": "^8.28.0",
+    "eslint": "^8.40.0",
     "helmet": "^7.0.0",
     "husky": "^8.0.2",
     "jest": "^29.3.1",

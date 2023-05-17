@@ -24,7 +24,6 @@ const logger = require("./logger").logger;
  *  setting various HTTP headers [https://helmetjs.github.io/]
  */
 const helmet = require("helmet");
-const { log } = require("winston");
 
 // Initialzie Express
 const app = express();

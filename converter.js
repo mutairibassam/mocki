@@ -131,17 +131,17 @@ function mockarooTypeChecker(fieldName, type) {
   let fieldType = "";
   switch (type) {
     case "string":
-      if (fieldName.includes("first_name")) {
+      if (fieldName.includes("first_name") || fieldName.includes("firstName")) {
         fieldType = "First Name";
-      } else if (fieldName.includes("last_name")) {
+      } else if (fieldName.includes("last_name") || fieldName.includes("lastName")) {
         fieldType = "Last Name";
-      } else if (fieldName.includes("full_name")) {
+      } else if (fieldName.includes("full_name") || fieldName.includes("fullName")) {
         fieldType = "Full Name";
-      } else if (fieldName.includes("username")) {
+      } else if (fieldName.includes("username") || fieldName.includes("userName")) {
         fieldType = "Username";
       } else if (fieldName.includes("name")) {
         fieldType = "Full Name";
-      } else if (fieldName.includes("password")) {
+      } else if (fieldName.includes("password") || fieldName.includes("pass")) {
         fieldType = "Password";
       } else if (fieldName.includes("address")) {
         fieldType = "Address Line 2";
@@ -161,15 +161,13 @@ function mockarooTypeChecker(fieldName, type) {
         fieldType = "Country Code";
       } else if (fieldName.includes("country")) {
         fieldType = "Country";
-      } else if (fieldName.includes("country") && fieldName.includes("code")) {
-        fieldType = "Country Code";
       } else if (fieldName.includes("latitude")) {
         fieldType = "Latitude";
       } else if (fieldName.includes("longitude")) {
         fieldType = "Longitude";
       } else if (fieldName.includes("phone") || fieldName.includes("mobile")) {
         fieldType = "Phone";
-      } else if (fieldName.includes("company") && fieldName.includes("name")) {
+      } else if (fieldName.includes("company")) {
         fieldType = "Fake Company Name";
       } else if (fieldName.includes("url") || fieldName.includes("link")) {
         fieldType = "URL";
@@ -211,7 +209,6 @@ function mockarooTypeChecker(fieldName, type) {
         fieldType = "MongoDB ObjectID";
       } else {
         fieldType = "Sentences";
-        options = { min: 1, max: 1 };
       }
       break;
     case "number":
@@ -224,7 +221,6 @@ function mockarooTypeChecker(fieldName, type) {
         fieldName.toLowerCase().includes("income")
       ) {
         fieldType = "Money";
-        fieldOptions = { min: fieldValue, max: fieldValue + 5000 };
       } else if (
         fieldName.toLowerCase().includes("credit") &&
         fieldName.toLowerCase().includes("card") &&
