@@ -10,26 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build for Linux (x64)
-        run: npx pkg --targets=node14-linux-x64 mocki.js
-
-      - name: Build for Linux (x86)
-        run: npx pkg --targets=node14-linux-x86 mocki.js
-
-  build-windows:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        arch: [x64, x86, arm64]
 
     steps:
       - name: Checkout code
@@ -43,29 +27,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build for Windows (x64)
-        run: npx pkg --targets=node14-win-x64 mocki.js
-
-      - name: Build for Windows (x86)
-        run: npx pkg --targets=node14-win-x86 mocki.js
-
-  build-macos:
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build for macOS (x64)
-        run: npx pkg --targets=node14-macos-x64 mocki.js
-
-      - name: Build for macOS (arm64)
-        run: npx pkg --targets=node14-macos-arm64 mocki.js
+      - name: Build for ${{ matrix.os }} (${{ matrix.arch }})
+        run: npx pkg --targets=node14-${{ matrix.os }}-${{ matrix.arch }} mocki.js
