@@ -57,7 +57,7 @@ async function startBench() {
           return resolve(result);
         }
       });
-      instance.on("start", (result) => {
+      instance.on("start", () => {
         console.log('autocannon has been started.');
       });
       instance.on('error', (error) => {

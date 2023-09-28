@@ -11,7 +11,7 @@ async function readPayload() {
   } catch (error) {
     logger.error(error);
     throw new Error(
-      `Error reading or parsing JSON file with filename '${filename}': ${error}`
+      `Error reading or parsing JSON file with filename '${PAYLOAD_FILE_PATH}': ${error}`
     );
   }
 }
@@ -26,7 +26,7 @@ async function readParams() {
   } catch (error) {
     logger.error(error);
     throw new Error(
-      `Error reading or parsing JSON file with filename '${filename}': ${error}`
+      `Error reading or parsing JSON file with filename '${QUERY_FILE_PATH}': ${error}`
     );
   }
 }
