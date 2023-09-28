@@ -1,4 +1,10 @@
 class ApiMetrics {
+  /**
+   *  
+   * @param {*} data 
+   * 
+   */
+
   // "url": "http://localhost:3016/api/v1/public/create",
   // "connections": "2",
   // "sampleInt": 1000,
@@ -23,7 +29,8 @@ class ApiMetrics {
     this.start = new Date(data.start).toLocaleTimeString();
     this.finish = new Date(data.finish).toLocaleTimeString();
     this.errors = data.errors;
-    (this.timeouts = data.timeouts), (this.mismatches = data.mismatches);
+    this.timeouts = data.timeouts;
+    this.mismatches = data.mismatches;
     this.non2xx = data.non2xx;
     this["1xx"] = data["1xx"] ?? 0;
     this["2xx"] = data["2xx"] ?? 0;
@@ -38,6 +45,10 @@ class ApiMetrics {
 }
 
 class StatusCodeStats {
+  /**
+   * 
+   * @param {*} statusCodeStats 
+   */
   constructor(statusCodeStats) {
     this.stats = Object.entries(statusCodeStats).reduce((obj, [key, value]) => {
       obj[key] = new StatusCodeCount(value);
@@ -47,12 +58,21 @@ class StatusCodeStats {
 }
 
 class StatusCodeCount {
+  /**
+   * 
+   * @param {*} param0 
+   */
   constructor({ count }) {
     this.count = count;
   }
 }
 
 class Latency {
+  /**
+   * 
+   * @param {*} param0 
+   */
+
   // "average": 7.5,
   // "mean": 7.5,
   // "stddev": 6.5,
@@ -60,15 +80,20 @@ class Latency {
   // "max": 14,
   constructor({ average, mean, stddev, min, max, totalCount }) {
     this.average = average;
-    (this.mean = mean),
-      (this.stddev = stddev),
-      (this.min = min),
-      (this.max = max),
-      (this.totalCount = totalCount);
+    this.mean = mean;
+    this.stddev = stddev;
+    this.min = min;
+    this.max = max;
+    this.totalCount = totalCount;
   }
 }
 
 class Requests {
+  /**
+   * 
+   * @param {*} param0 
+   */
+
   // "average": 4,
   // "mean": 4,
   // "stddev": 0,
@@ -78,16 +103,21 @@ class Requests {
   // "sent": 4
   constructor({ average, mean, stddev, min, max, total, sent }) {
     this.average = average;
-    (this.mean = mean),
-      (this.stddev = stddev),
-      (this.min = min),
-      (this.max = max),
-      (this.total = total),
-      (this.sent = sent);
+    this.mean = mean;
+    this.stddev = stddev;
+    this.min = min;
+    this.max = max;
+    this.total = total;
+    this.sent = sent;
   }
 }
 
 class Throughput {
+  /**
+   * 
+   * @param {*} param0 
+   */
+  
   // "average": 4714,
   // "mean": 4714,
   // "stddev": 0,
@@ -96,11 +126,11 @@ class Throughput {
   // "total": 4712,
   constructor({ average, mean, stddev, min, max, total }) {
     this.average = average;
-    (this.mean = mean),
-      (this.stddev = stddev),
-      (this.min = min),
-      (this.max = max),
-      (this.total = total);
+    this.mean = mean;
+    this.stddev = stddev;
+    this.min = min;
+    this.max = max;
+    this.total = total;
   }
 }
 

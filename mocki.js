@@ -1,14 +1,16 @@
-const fs = require("fs");
+// public packages
+const express = require("express");
+const bodyParser = require("body-parser");
+require("dotenv").config();
+
+// internal packages
 const { AutocannonConfig } = require("./AutocannonConfig");
 const { ApiMetrics } = require("./ApiMetrics");
 const { MockarooKey } = require("./MockarooKey");
-const generateData2 = require("./MockarooConfig").generateData2;
-const converter = require("./converter");
-const startBench = require("./bench").startBench;
-const express = require("express");
-const bodyParser = require("body-parser");
-require('dotenv').config();
-
+const { generateData } = require("./MockarooConfig");
+const { flattenJson, flattenParams } = require("./converter");
+const { startBench } = require("./bench");
+const { removeGeneratedData } = require("./util")
 /**
  *  load config file
  */
@@ -55,63 +57,53 @@ app.use((req, res, next) => {
 
 app.post("/benchmark", async (req, res) => {
   try {
-    const request = req.body;
-    const config = new AutocannonConfig({
-      protocol: request.protocol,
-      baseUrl: request["base-url"],
-      path: request.path,
-      port: request.port,
-      numConnections: request["connection-count"],
-      maxConnectionRequests: request["requester-count"],
-      duration: request.duration,
-      method: request.method,
-      headers: request.headers,
-      payload: request.payload.length > 0 ? JSON.parse(request.payload) : {},
-    });
+    const instance = AutocannonConfig.init(req.body);
 
-    const filename_dummy = "./dummy.json";
-    const filename_params = "./dummy_params.json";
-    await fs.promises.writeFile(filename_dummy, "");
-    await fs.promises.writeFile(filename_params, "");
+    /**
+     *  we need to check if @var instance.method is [GET] or not, so we can skip
+     *  payload generation.
+     *
+     *  @function generateData writes payload in device storage as a txt file
+     *  with name (dummay_payload.txt).
+     *
+     *  @todo:  instead of checking operation type we might just parse empty string.
+     *          we need to confirm if this will not cause any issue.
+     *
+     *          in the future, we might add (OPTION, HEAD)
+     */
 
-    if (config.method !== "GET") {
-      const flatJson = converter.flattenJson(config.payload);
-      const [isValid, msg] = await generateData2(flatJson);
-      if (!isValid) {
-        return res.send({ data: msg });
+    try {
+      /**
+       *  we have embedded another try/catch since [Mockaroo] has custom error that we
+       *  need the user to be aware of.
+       *
+       *  @todo:  define a function scope variable to handle differnet error states
+       *          instead of embedding try/catch.
+       *
+       */
+      await generateData(flattenJson(instance.payload));
+
+      /**
+       *  if @var dynamic_params length is more than 0, so we have params that need to be generated.
+       *
+       *  @function generated_data is written in device storage as a txt file with name (dummy_params.txt)
+       *
+       */
+      if (instance.dynamic_params.length > 0) {
+        await generateData(flattenParams(instance.dynamic_params), "query");
       }
+    } catch (error) {
+      return res.send({ data: error });
     }
 
-    const instance = AutocannonConfig.getInstance();
-    if (instance.dynamic_params.length > 0) {
-      const flatParams = converter.flattenParams(config.dynamic_params);
-      const [isValid, msg] = await generateData2(flatParams, "query");
-      if (!isValid) {
-        return res.send({ data: msg });
-      }
-    }
     const result = await startBench();
-    removeFiles();
+    removeGeneratedData();
     const obj = new ApiMetrics(result);
     return res.status(200).send({ data: obj });
   } catch (error) {
     return res.status(400).send({ data: error });
   }
 });
-
-/// delete local files
-function removeFiles() {
-  try {
-    fs.unlink("dummy.json", (err) => {
-      if (err) throw err;
-    });
-    fs.unlink("dummy_params.json", (err) => {
-      if (err) throw err;
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
 
 /**
  * Handles a GET request to the "/token" endpoint.
@@ -132,8 +124,13 @@ const PORT = config.port || 3001;
 
 app.listen(PORT, () => {
   logger.info(`Server @ ${config.base_url}:${PORT}`);
-  new MockarooKey({ token: "15fdb4d0" });
-  logger.info('Client has been instantiated successfully.')
-  console.log(`\n[!] Mocki Backend is running locally. You can benchmark your localhost APIs.`)
-  console.log(`[!] Issue/Features [https://github.com/mutairibassam/mocki-ui/issues]\n`);
+  /// init Mockaroo at runtime to avoid hitting /token api.
+  // new MockarooKey({ token: "15fdb4d0" });
+  logger.info("Client has been instantiated successfully.");
+  console.log(
+    `\n[!] Mocki Backend is running locally. You can benchmark your localhost APIs.`
+  );
+  console.log(
+    `[!] Issue/Features [https://github.com/mutairibassam/mocki-ui/issues]\n`
+  );
 });

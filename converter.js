@@ -3,7 +3,7 @@
  * If the input is not a valid JSON object or is null, an empty array is returned.
  * Nested properties are prefixed with the provided prefix string (if any).
  * The function uses a mockarooTypeChecker and options object to determine the type and options of each property.
- * 
+ *
  * @param {object} json - The JSON object to flatten.
  * @param {string} prefix - The prefix to use for nested properties (optional).
  * @returns {Array} An array of key-value pairs representing the flattened JSON object.
@@ -131,17 +131,26 @@ function mockarooTypeChecker(fieldName, type) {
   let fieldType = "";
   switch (type) {
     case "string":
-      if (fieldName.includes("first_name") || fieldName.includes("firstName")) {
-        fieldType = "First Name";
-      } else if (fieldName.includes("last_name") || fieldName.includes("lastName")) {
-        fieldType = "Last Name";
-      } else if (fieldName.includes("full_name") || fieldName.includes("fullName")) {
-        fieldType = "Full Name";
-      } else if (fieldName.includes("username") || fieldName.includes("userName")) {
+      if (fieldName.includes("username") || fieldName.includes("userName")) {
         fieldType = "Username";
       } else if (fieldName.includes("name")) {
         fieldType = "Full Name";
-      } else if (fieldName.includes("password") || fieldName.includes("pass")) {
+      } else if (
+        fieldName.includes("first_name") ||
+        fieldName.includes("firstName")
+      ) {
+        fieldType = "First Name";
+      } else if (
+        fieldName.includes("last_name") ||
+        fieldName.includes("lastName")
+      ) {
+        fieldType = "Last Name";
+      } else if (
+        fieldName.includes("full_name") ||
+        fieldName.includes("fullName")
+      ) {
+        fieldType = "Full Name";
+      } else if (fieldName.includes("password") || fieldName.includes("passwd") || fieldName.includes("pass")) {
         fieldType = "Password";
       } else if (fieldName.includes("address")) {
         fieldType = "Address Line 2";

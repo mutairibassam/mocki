@@ -1,50 +1,11 @@
 const autocannon = require("autocannon");
 const { AutocannonConfig } = require("./AutocannonConfig");
-
-const fs = require("fs");
-
-async function readPayload() {
-  const filename = "./dummy.json";
-  try {
-    const data = await fs.promises.readFile(filename);
-    if (data.byteLength > 0) {
-      const jsonObj = JSON.parse(data);
-      return jsonObj;
-    }
-  } catch (error) {
-    throw new Error(
-      `Error reading or parsing JSON file with filename '${filename}': ${error}`
-    );
-  }
-}
-
-async function readParams() {
-  const filename = "./dummy_params.json";
-  try {
-    const data = await fs.promises.readFile(filename);
-    if (data.byteLength > 0) {
-      const jsonObj = JSON.parse(data);
-      return jsonObj;
-    }
-  } catch (error) {
-    throw new Error(
-      `Error reading or parsing JSON file with filename '${filename}': ${error}`
-    );
-  }
-}
-
-function toQuery(json) {
-  let params = [];
-  for (let key in json) {
-    params.push(`${key}=${json[key]}`);
-  }
-  return params.join("&");
-}
+const { readPayload, readParams, getPath} = require("./util")
 
 async function startBench() {
-  const payload = await readPayload();
-  const params = await readParams();
   const autocannonInstance = AutocannonConfig.getInstance();
+  const params = autocannonInstance.params == '' ? '' : await readParams();
+  const payload = autocannonInstance.payload == {} ? {} : await readPayload();
 
   const url = autocannonInstance.full_path;
 
@@ -67,6 +28,7 @@ async function startBench() {
       {
         method: autocannonInstance.method,          
         setupRequest: function (request) {
+          // logging [Request Number] for user visibility and better experience
           console.log("Request Number: ", requestNumber + 1);
           request.path = getPath(params, fixed_params, path, requestNumber)
           request.body =
@@ -74,6 +36,7 @@ async function startBench() {
               ? JSON.stringify(payload[requestNumber])
               : null;
           requestNumber++;
+          /// below logs are used for debuggin purposes
           // console.log(`Method: ${request.method}`);
           // console.log(`Url: ${request.origin + request.path}`);
           // request.body != undefined ? console.log(`Payload:\n ${request.body}`) : null
@@ -94,23 +57,17 @@ async function startBench() {
           return resolve(result);
         }
       });
+      instance.on("start", (result) => {
+        console.log('autocannon has been started.');
+      });
+      instance.on('error', (error) => {
+        console.log(`autocannon has an error: ${error} `);
+      });
     });
     return results;
   } catch (error) {
-    console.error("Error in startBench:", error);
+    console.error("Error in startBench: ", error);
     throw error;
-  }
-}
-
-function getPath(params, fix_params, path, requestNumber) {
-  if (!params && !fix_params) {
-    return path;
-  } else if (params && !fix_params) {
-    return path +"?"+ toQuery(params[requestNumber]);
-  } else if (params && fix_params) {
-    return path +"?"+ toQuery(params[requestNumber]) +"&"+ fix_params;
-  } else if (!params && fix_params) {
-    return path +"?"+ fix_params;
   }
 }
 

@@ -1,4 +1,8 @@
-/* eslint-disable no-undef */
+/**
+ *      @todo achieve 100% test coverage
+ * 
+ */
+
 const fs = require("fs");
 /**
  *  for logging

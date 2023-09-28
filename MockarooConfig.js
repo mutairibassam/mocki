@@ -2,6 +2,7 @@ var Mockaroo = require("mockaroo");
 const { AutocannonConfig } = require('./AutocannonConfig');
 const { MockarooKey } = require('./MockarooKey');
 var fs = require("fs");
+const { QUERY_FILE_PATH, PAYLOAD_FILE_PATH } = require('./constants')
 
 class MockarooConfig {
   #instance;
@@ -22,7 +23,7 @@ class MockarooConfig {
   }
 }
 
-async function generateData2(mockarooFields, requester) {
+async function generateData(mockarooFields, flag) {
   const client = MockarooKey.getInstance();
   const mockarooConfig = MockarooConfig.getInstance({ fields: mockarooFields });
   try {
@@ -31,23 +32,22 @@ async function generateData2(mockarooFields, requester) {
       fields: mockarooConfig.fields,
     });
     const jsonData = JSON.stringify(records);
-    if(requester === "query") {
-      await fs.promises.writeFile("dummy_params.json", jsonData); 
+    if(flag === "query") {
+      await fs.promises.writeFile(QUERY_FILE_PATH, jsonData); 
     } else {
-      await fs.promises.writeFile("dummy.json", jsonData);
+      await fs.promises.writeFile(PAYLOAD_FILE_PATH, jsonData);
     }
-    return [true, "valid"];
   } catch (error) {
     if (error instanceof Mockaroo.errors.InvalidApiKeyError) {
-      return [false,"Invalid API key"]
+      throw 'invalid api key'
     } else if (error instanceof Mockaroo.errors.UsageLimitExceededError) {
-      return [false,"Usage limit exceeded"]
+      throw 'usage limit exceeded'
     } else if (error instanceof Mockaroo.errors.ApiError) {
-      return [false, `API error: ${error.message}`]
+      throw `api error: ${error.message}`
     } else {
-      return [false, `Unknown error: ${error}`]
+      throw `unknown error: ${error}`
     }
   }
 }
 
-module.exports = { MockarooConfig, generateData2 }
+module.exports = { MockarooConfig, generateData }
