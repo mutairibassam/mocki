@@ -1,8 +1,14 @@
 node_modules/
 .vscode
 sample.json
-dummy.json
+dummy_payload.json
 dummy_params.json
 tests.js
 mocki
 mocki.pub
+/logs
+.env
+mocki-linux
+mocki-macos
+mocki-win.exe
+token.sh

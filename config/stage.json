@@ -1,0 +1,10 @@
+{
+  "connectionLimit": "20",
+  "port": "3000",
+  "debug": "false",
+  "timezone": "UTC+0",
+  "ssl": true,
+  "mongo_conn_str": "mongodb://localhost:27017/mocki",
+  "url": "",
+  "env": "stage"
+}
